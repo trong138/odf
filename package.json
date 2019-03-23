@@ -1,0 +1,27 @@
+{
+  "name": "ows-dev-flow",
+  "version": "1.0.0",
+  "description": "Automatic dev flow with Gitlab, Redmine, and RocketChat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "odf": "./index.js"
+  },
+  "author": "giangndm",
+  "license": "ISC",
+  "dependencies": {
+    "co": "^4.6.0",
+    "commander": "^2.9.0",
+    "convert-async": "^1.0.0",
+    "date-diff": "^0.1.3",
+    "jsonfile": "^2.4.0",
+    "node-redmine": "^0.1.5",
+    "prompt": "^1.0.0",
+    "request": "^2.81.0",
+    "simple-git": "^1.67.0",
+    "string-template": "^1.0.0",
+    "terminal-kit": "^1.0.3"
+  }
+}
