@@ -11,8 +11,6 @@ class InitAction {
     }
 
     do(resolve, reject) {
-        console.log("Goto https://redmine.ows.vn/my/account to get your accesskey.");
-        console.log("Goto https://git.ows.vn/profile/personal_access_tokens to get gitlab token");
         prompt.start();
 
         co((function* () {
@@ -21,10 +19,11 @@ class InitAction {
                 'https://redmine.ows.vn'
             ];
             var git_host = [
-                'https://git.ows.vn'
+                'https://git.ows.vn',
+                'https://api.github.com'
             ]
 
-            // select redmine_host
+            // select redmine_host ////////////////////////////////////////////////////////////////////////////////
             console.log("*************************************************************")
             for (var i = 0; i < redmine_host.length; i++) {
                 console.log("Redmine %s: %s", i, redmine_host[i]);
@@ -38,7 +37,17 @@ class InitAction {
                 }
             }
             result.redmine_host = redmine_host[redmine_host_id];
-            //select git_host
+            console.log("Goto https://redmine.ows.vn/my/account to get your accesskey.");
+            // insert redmine_apikey ////////////////////////////////////////////////////////////////////////////////
+            result.redmine_apikey = "";
+            while (true) {
+                result.redmine_apikey = (yield convertAsync(prompt, prompt.get, [['redmine_apikey']])).redmine_apikey;
+                if (result.redmine_apikey == "") {
+                    continue;
+                }
+                break;
+            }
+            //select git_host ////////////////////////////////////////////////////////////////////////////////
             console.log("*************************************************************")
             for (var i = 0; i < git_host.length; i++) {
                 console.log("Git %s: %s", i, git_host[i]);
@@ -52,16 +61,13 @@ class InitAction {
                 }
             }
             result.git_host = git_host[git_host_id];
-            // insert redmine_apikey
-            result.redmine_apikey = "";
-            while (true) {
-                result.redmine_apikey = (yield convertAsync(prompt, prompt.get, [['redmine_apikey']])).redmine_apikey;
-                if (result.redmine_apikey == "") {
-                    continue;
-                }
-                break;
+            if (git_host_id == 0) { // gitlab
+                console.log("Goto https://git.ows.vn/profile/personal_access_tokens to get gitlab token");
+            } else if (git_host_id == 1) { // github
+                console.log("Goto https://github.com/settings/tokens to get github token");
             }
-            // insert git_token
+
+            // insert git_token ////////////////////////////////////////////////////////////////////////////////
             result.git_token = "";
             while (true) {
                 result.git_token = (yield convertAsync(prompt, prompt.get, [['git_token']])).git_token;
@@ -70,7 +76,6 @@ class InitAction {
                 }
                 break;
             }
-
             console.log('result', result);
 
             this.redmine = new Redmine(result.redmine_host, {
@@ -83,7 +88,7 @@ class InitAction {
             result.redmine_user_login = me.user.login;
             result.redmine_user_email = me.user.email;
 
-            this.ProjectStorage.write({ login: result });
+            this.ProjectStorage.write(result);
 
             return "Saved";
 

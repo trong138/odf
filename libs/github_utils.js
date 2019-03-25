@@ -5,7 +5,7 @@ const convertAsync = require('convert-async');
 const ProjectStorage = require('../storages/project')
 const request = require('request');
 
-class GitlabUtils {
+class GithubUtils {
     constructor() {
         this.projectStorage = new ProjectStorage();
         this.auth = this.projectStorage.read();
@@ -43,9 +43,10 @@ class GitlabUtils {
     get(uri) {
         return new Promise((resolve, reject) => {
             var options = {
-                url: this.auth.git_host + "/api/v3" + uri,
+                url: this.auth.git_host + uri,
                 headers: {
-                    "PRIVATE-TOKEN": this.auth.git_token
+                    "Authorization": "token " + this.auth.git_token,
+                    'user-agent': 'Awesome-Octocat-App'
                 }
             }
 
@@ -76,7 +77,7 @@ class GitlabUtils {
     }
 
     searchProject(search) {
-        return this.get('/projects?simple=true&search=' + encodeURIComponent(search));
+        return this.get('/user/repos');
     }
 
     searchBranch(id) {
@@ -96,4 +97,4 @@ class GitlabUtils {
     }
 }
 
-module.exports = GitlabUtils;
+module.exports = GithubUtils;
