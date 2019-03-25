@@ -1,6 +1,5 @@
 "use strict";
 const prompt = require('prompt');
-const simple_git = require('simple-git');
 const co = require('co');
 const os = require("os");
 const convertAsync = require('convert-async');
@@ -11,7 +10,6 @@ const ProjectStorage = require('../storages/project')
 
 class StartAction {
     constructor(params) {
-        this.git = simple_git('./');
         this.params = params;
         this.redmine_utils = new RedmineUtils();
         this.git_branch_utils = new GitBranchUtils();
@@ -23,8 +21,8 @@ class StartAction {
             "use strict";
 
             var previous_issue_id = yield this.git_branch_utils.getCurrentIssue();
-            console.log(previous_issue_id);
-            throw new Error("Usage: odf start ISSUE_ID");
+            // console.log(previous_issue_id);
+            // throw new Error("Usage: odf start ISSUE_ID");
             if (this.params.length <= 0) {
                 throw new Error("Usage: odf start ISSUE_ID");
             }
@@ -34,7 +32,7 @@ class StartAction {
             console.log("Checking info for issue_id:" + issue_id);
             let issue_info = yield this.redmine_utils.checkIssue(issue_id);
 
-            // console.log('ows-issue_info', issue_info);
+            console.log('ows-issue_info', issue_info);
 
             if (issue_info.issue.status.name != "New") {
                 throw new Error("This issue status:" + issue_info.issue.status.name + " is not New, please checking again or using switch command");
@@ -66,7 +64,6 @@ class StartAction {
                     var notes = "Switched to working on issue #" + issue_id + ".";
                     notes += "\nDevice:" + os.hostname();
                     notes += "\n\nReason:" + reason_input.reason;
-                    console.log('update-issue', previous_issue_info, notes);
                     yield this.redmine_utils.updateIssue(previous_issue_id, {
                         issue: {
                             notes: notes

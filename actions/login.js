@@ -7,7 +7,7 @@ const ProjectStorage = require('../storages/project')
 
 class InitAction {
     constructor(params) {
-        this.ProjectStorage = new ProjectStorage();
+        this.projectStorage = new ProjectStorage();
     }
 
     do(resolve, reject) {
@@ -88,7 +88,8 @@ class InitAction {
             result.redmine_user_login = me.user.login;
             result.redmine_user_email = me.user.email;
 
-            this.ProjectStorage.write(result);
+            this.projectStorage.write(result);
+            // child_process.execSync('echo "\n.odf.json" >> .gitignore')
 
             return "Saved";
 

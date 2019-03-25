@@ -1,5 +1,4 @@
 "use strict";
-const convertAsync = require('convert-async');
 const request = require("request");
 
 const ProjectStorage = require('../storages/project')

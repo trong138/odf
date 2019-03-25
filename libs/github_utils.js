@@ -1,14 +1,11 @@
 "use strict";
-const co = require('co');
-const convertAsync = require('convert-async');
-
 const ProjectStorage = require('../storages/project')
 const request = require('request');
 
 class GithubUtils {
     constructor() {
         this.projectStorage = new ProjectStorage();
-        this.auth = this.projectStorage.read();
+        this.project = this.projectStorage.read();
     }
 
     post(uri, data) {
@@ -16,10 +13,11 @@ class GithubUtils {
 
             var options = {
                 method: 'POST',
-                url: this.auth.git_host + "/api/v3" + uri,
+                url: this.project.git_host + uri,
                 headers:
                 {
-                    "PRIVATE-TOKEN": this.auth.git_token
+                    "Authorization": "token " + this.project.git_token,
+                    'user-agent': 'Awesome-Octocat-App'
                 },
                 formData: data
             };
@@ -43,9 +41,9 @@ class GithubUtils {
     get(uri) {
         return new Promise((resolve, reject) => {
             var options = {
-                url: this.auth.git_host + uri,
+                url: this.project.git_host + uri,
                 headers: {
-                    "Authorization": "token " + this.auth.git_token,
+                    "Authorization": "token " + this.project.git_token,
                     'user-agent': 'Awesome-Octocat-App'
                 }
             }
@@ -88,11 +86,12 @@ class GithubUtils {
         return this.get('/projects/' + encodeURIComponent(project_name));
     }
 
-    createMergeRequest(project_id, from, to, title) {
-        return this.post('/projects/' + project_id + '/merge_requests', {
-            source_branch: from,
-            target_branch: to,
-            title: title
+    createMergeRequest(from, to, title) {
+        return this.post('/repos/' + this.project.git_project_path + '/pulls', {
+            "title": title,
+            "body": "finish",
+            "head": from,
+            "base": to
         })
     }
 }

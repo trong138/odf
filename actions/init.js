@@ -11,11 +11,11 @@ const GithubUtils = require('../libs/github_utils');
 class InitAction {
     constructor(params) {
         this.projectStorage = new ProjectStorage();
-        this.dataLocal = this.projectStorage.read();
-        if (this.dataLocal.git_host.indexOf("ows") != -1 || this.dataLocal.git_host.indexOf("lab") != -1) { // gitlab
+        this.project = this.projectStorage.read();
+        if (this.project.git_host.indexOf("ows") != -1 || this.project.git_host.indexOf("lab") != -1) { // gitlab
             this.type_git = "gitlab";
             this.git_utils = new GitLabUtils();
-        } else if (this.dataLocal.git_host.indexOf("github") != -1) { // github
+        } else if (this.project.git_host.indexOf("github") != -1) { // github
             this.type_git = "github";
             this.git_utils = new GithubUtils();
         }
@@ -26,7 +26,7 @@ class InitAction {
         co((function* () {
             "use strict";
             var result = {};
-            var result = this.dataLocal;
+            var result = this.project;
             console.log(result);
             this.redmine = new Redmine(result.redmine_host, {
                 apiKey: result.redmine_apikey
@@ -77,6 +77,7 @@ class InitAction {
                 console.log("*************************************************************")
                 for (var i = 0; i < projects.length; i++) {
                     console.log("Project %s: %s", i, projects[i].full_name);
+
                 }
                 console.log("****************Select project id in above*******************")
             }
@@ -90,6 +91,7 @@ class InitAction {
                 }
             }
             result.git_project_id = projects[project_id].id;
+            result.git_project_path = projects[project_id].full_name;
             // console.log('result-ows', result);
             this.projectStorage.write(result);
             // child_process.execSync('echo "\n.odf.json" >> .gitignore')
