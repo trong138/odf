@@ -65,21 +65,20 @@ class InitAction {
                 }
                 console.log("****************Select project id in above*******************")
             } else if (this.type_git == "github") { // github
+
+                console.log("*************************************************************")
+                let count = 0;
                 for (let i = 0; i < _projects.length; i++) {
                     if (_projects[i].name.indexOf(git_project_name) != -1) {
                         projects.push(_projects[i]);
+                        console.log("Project %s: %s", projects.length - 1, _projects[i].name);
                     }
                 }
+                console.log("****************Select project id in above*******************")
 
                 if (projects.length <= 0) {
                     throw new Error("ERROR:Cannot find any project with name:" + git_project_name);
                 }
-                console.log("*************************************************************")
-                for (var i = 0; i < projects.length; i++) {
-                    console.log("Project %s: %s", i, projects[i].full_name);
-
-                }
-                console.log("****************Select project id in above*******************")
             }
 
             // set project id

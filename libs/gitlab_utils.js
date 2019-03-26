@@ -5,7 +5,7 @@ const request = require('request');
 class GitlabUtils {
     constructor() {
         this.projectStorage = new ProjectStorage();
-        this.auth = this.projectStorage.read();
+        this.project = this.projectStorage.read();
     }
 
     post(uri, data) {
@@ -13,10 +13,10 @@ class GitlabUtils {
 
             var options = {
                 method: 'POST',
-                url: this.auth.git_host + "/api/v3" + uri,
+                url: this.project.git_host + "/api/v3" + uri,
                 headers:
                 {
-                    "PRIVATE-TOKEN": this.auth.git_token
+                    "PRIVATE-TOKEN": this.project.git_token
                 },
                 formData: data
             };
@@ -40,9 +40,9 @@ class GitlabUtils {
     get(uri) {
         return new Promise((resolve, reject) => {
             var options = {
-                url: this.auth.git_host + "/api/v3" + uri,
+                url: this.project.git_host + "/api/v3" + uri,
                 headers: {
-                    "PRIVATE-TOKEN": this.auth.git_token
+                    "PRIVATE-TOKEN": this.project.git_token
                 }
             }
 
@@ -84,8 +84,8 @@ class GitlabUtils {
         return this.get('/projects/' + encodeURIComponent(project_name));
     }
 
-    createMergeRequest(project_id, from, to, title) {
-        return this.post('/projects/' + project_id + '/merge_requests', {
+    createMergeRequest(from, to, title) {
+        return this.post('/projects/' + this.project.git_project_id + '/merge_requests', {
             source_branch: from,
             target_branch: to,
             title: title

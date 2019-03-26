@@ -17,19 +17,21 @@ class GithubUtils {
                 headers:
                 {
                     "Authorization": "token " + this.project.git_token,
-                    'user-agent': 'Awesome-Octocat-App'
+                    "user-agent": "Awesome-Octocat-App",
+                    "Content-Type": "application/json"
                 },
-                formData: data
+                json: data
             };
 
             request(options, function (error, response, body) {
+
                 if (error) {
                     reject(error);
                     return;
                 }
 
                 try {
-                    resolve(JSON.parse(body));
+                    resolve(body);
                 } catch (e) {
                     reject(e);
                     return;
@@ -44,7 +46,8 @@ class GithubUtils {
                 url: this.project.git_host + uri,
                 headers: {
                     "Authorization": "token " + this.project.git_token,
-                    'user-agent': 'Awesome-Octocat-App'
+                    'user-agent': 'Awesome-Octocat-App',
+                    // 'Content-Type': 'application/json'
                 }
             }
 
